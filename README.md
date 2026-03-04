@@ -98,6 +98,27 @@ npm start
 
 # 代码检查
 npm run lint
+
+# ESLint 自动修复
+npm run lint:fix
+
+# 代码格式化
+npm run format
+
+# 检查代码格式
+npm run format:check
+
+# 运行测试
+npm test
+
+# 监听模式运行测试
+npm run test:watch
+
+# 运行测试并生成覆盖率报告
+npm run test:coverage
+
+# 打开测试 UI 界面
+npm run test:ui
 ```
 
 服务器默认在 `http://localhost:3000` 启动。
@@ -239,12 +260,83 @@ eventSource.onerror = (error) => {
 };
 ```
 
+## 测试
+
+项目使用 [Vitest](https://vitest.dev/) 作为测试框架，提供快速、现代化的测试体验。
+
+### 测试命令
+
+```bash
+# 运行所有测试
+npm test
+
+# 监听模式（推荐开发时使用）
+npm run test:watch
+
+# 生成测试覆盖率报告
+npm run test:coverage
+
+# 打开可视化测试界面
+npm run test:ui
+```
+
+### 测试结构
+
+```
+server/src/
+├── services/
+│   ├── SSEService.ts        # 源码
+│   └── SSEService.test.ts   # 单元测试
+└── routes/
+    ├── sse.ts               # 源码
+    └── sse.test.ts          # 集成测试
+```
+
+### 测试覆盖
+
+- **单元测试**: SSEService 类的所有核心功能
+  - 客户端添加/移除
+  - 消息发送/广播
+  - 心跳机制
+  - 错误处理
+
+- **集成测试**: SSE 路由的 HTTP 请求
+  - SSE 流连接
+  - 广播端点
+  - 定向消息端点
+  - 客户端列表端点
+
 ## 开发指南
+
+### 代码风格
+
+项目使用统一的代码风格配置：
+
+- **缩进**: 4 个空格（TypeScript/JavaScript）
+- **格式化工具**: Prettier
+- **代码检查**: ESLint
+- **保存时自动格式化**: 已配置 VSCode
+
+**格式化命令**：
+```bash
+# 格式化所有代码
+npm run format
+
+# 检查格式
+npm run format:check
+
+# 自动修复 lint 问题
+npm run lint:fix
+```
+
+详见 [代码风格指南](./server/CODE_STYLE.md)
 
 ### 项目文档
 
 - [后端开发文档](./server/README.md) - 后端 API 和服务详细说明
 - [前端开发文档](./client/README.md) - 客户端集成指南
+- [代码风格指南](./server/CODE_STYLE.md) - 代码规范和格式化配置
+- [测试文档](./server/TEST.md) - 测试框架和最佳实践
 - [Claude Code 指南](./CLAUDE.md) - 面向 AI 辅助开发的项目指南
 
 ### 环境配置

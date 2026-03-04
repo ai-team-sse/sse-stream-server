@@ -52,7 +52,7 @@ sseRouter.post('/broadcast', (req: Request, res: Response) => {
     res.json({
         success: true,
         message: '消息已广播',
-        clientCount: count
+        clientCount: count,
     });
 });
 
@@ -89,6 +89,6 @@ sseRouter.get('/clients', (_req: Request, res: Response) => {
     const clients = sseService.getClients();
     res.json({
         count: clients.length,
-        clients
+        clients,
     });
 });

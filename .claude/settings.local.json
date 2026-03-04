@@ -7,7 +7,11 @@
       "Bash(git config user.email)",
       "Bash(git config user.name \"tom\")",
       "Bash(git config user.email \"337961290@qq.com\")",
-      "Bash(tree -L 3 -I 'node_modules|dist|.git' --dirsfirst)"
+      "Bash(tree -L 3 -I 'node_modules|dist|.git' --dirsfirst)",
+      "Bash(npm install -D vitest @vitest/ui supertest @types/supertest)",
+      "Bash(npm test)",
+      "Bash(npm install -D prettier eslint-config-prettier eslint-plugin-prettier)",
+      "Bash(npm run format)"
     ]
   }
 }

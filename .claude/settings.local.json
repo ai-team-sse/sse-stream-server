@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree -L 3 -a)",
+      "Bash(tree -L 3 -I \"node_modules|.git\")",
+      "Bash(git config user.name)",
+      "Bash(git config user.email)",
+      "Bash(git config user.name \"tom\")",
+      "Bash(git config user.email \"337961290@qq.com\")",
+      "Bash(tree -L 3 -I 'node_modules|dist|.git' --dirsfirst)"
+    ]
+  }
+}

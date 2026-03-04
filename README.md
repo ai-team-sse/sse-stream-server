@@ -2,6 +2,11 @@
 
 一个基于 Node.js + Express + TypeScript 的 Server-Sent Events (SSE) 流服务器项目，采用前后端分离架构。
 
+## 快速导航
+
+- 👉 [快速开始指南](./GETTING_STARTED.md) - 新手入门必读
+- 📖 [完整文档](#目录) - 详细技术文档
+
 ## 目录
 
 - [功能特性](#功能特性)
@@ -10,6 +15,7 @@
 - [快速开始](#快速开始)
 - [API 文档](#api-文档)
 - [使用示例](#使用示例)
+- [测试](#测试)
 - [开发指南](#开发指南)
 - [License](#license)
 
@@ -48,11 +54,20 @@ sse-stream-server/
 │   │   │   └── sse.ts          # SSE 路由定义
 │   │   └── services/
 │   │       └── SSEService.ts   # SSE 核心服务
-│   ├── package.json
-│   ├── tsconfig.json
+│   ├── package.json            # Server 依赖配置
+│   ├── tsconfig.json           # TypeScript 配置
+│   ├── vitest.config.ts        # 测试配置
+│   ├── .prettierrc.json        # 代码格式化配置
+│   ├── .eslintrc.json          # 代码检查配置
 │   └── .env.example            # 环境变量示例
 ├── client/                      # 前端项目（预留）
 │   └── README.md               # 客户端使用指南
+├── .vscode/                     # VSCode 配置
+│   ├── settings.json           # 编辑器设置
+│   └── extensions.json         # 推荐扩展
+├── package.json                # Monorepo 根配置
+├── .editorconfig               # 跨编辑器配置
+├── .gitignore                  # Git 忽略文件
 ├── CLAUDE.md                   # 开发者指南
 └── README.md                   # 项目文档
 ```
@@ -66,6 +81,20 @@ sse-stream-server/
 | SSE 路由 | `server/src/routes/sse.ts` | SSE 相关的路由定义 |
 | SSE 服务 | `server/src/services/SSEService.ts` | 客户端管理、消息推送核心逻辑 |
 
+### Monorepo 架构
+
+项目采用 npm workspaces 管理多个子包：
+
+- **根目录**：统一的脚本入口，可直接执行所有命令
+- **server**：后端服务器独立包
+- **client**：前端项目独立包（预留）
+
+**优势**：
+- 统一依赖管理
+- 共享开发工具配置
+- 简化命令执行（无需 cd 切换目录）
+- 便于前后端协同开发
+
 ## 快速开始
 
 ### 环境要求
@@ -75,17 +104,16 @@ sse-stream-server/
 
 ### 安装和运行
 
-#### 1. 后端服务器
+#### 方式一：根目录执行（推荐）
+
+在项目根目录可以直接执行所有命令：
 
 ```bash
-# 进入后端目录
-cd server
-
-# 安装依赖
+# 安装所有依赖
 npm install
 
 # 复制环境变量配置
-cp .env.example .env
+cp server/.env.example server/.env
 
 # 开发模式运行（支持热重载）
 npm run dev
@@ -119,6 +147,22 @@ npm run test:coverage
 
 # 打开测试 UI 界面
 npm run test:ui
+```
+
+#### 方式二：进入子目录执行
+
+```bash
+# 进入后端目录
+cd server
+
+# 安装依赖
+npm install
+
+# 其他命令与方式一相同
+npm run dev
+npm test
+npm run format
+# ...
 ```
 
 服务器默认在 `http://localhost:3000` 启动。

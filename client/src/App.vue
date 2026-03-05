@@ -19,16 +19,30 @@
                 v-for="(msg, index) in messages"
                 :key="index"
                 class="message"
-                :class="[msg.type, { 'message-right': msg.type === 'broadcast', 'message-left': msg.type === 'server-reply' }]"
+                :class="[msg.type, { 'message-right': msg.type === 'broadcast', 'message-left': msg.type === 'server-reply' || msg.type === 'system' }]"
             >
                 <div class="message-bubble">
                     <div class="message-content">
-                        <span v-if="msg.type === 'system'" class="system-icon">ℹ️</span>
-                        <span v-else-if="msg.type === 'server-reply'" class="server-icon">🤖</span>
-                        <span v-else-if="msg.type === 'broadcast'" class="user-icon">👤</span>
-                        <span v-else-if="msg.type === 'direct'" class="direct-icon">💬</span>
-                        <span v-else-if="msg.type === 'info'" class="info-icon">✨</span>
-                        {{ msg.text }}
+                        <!-- 服务器回复：图标 + Markdown -->
+                        <template v-if="msg.type === 'server-reply'">
+                            <span class="server-icon">🤖</span>
+                            <MarkdownMessage :content="msg.text" />
+                        </template>
+                        <!-- 用户消息：图标 + 文本 -->
+                        <template v-else-if="msg.type === 'broadcast'">
+                            <span class="user-icon">👤</span>
+                            <span class="plain-text">{{ msg.text }}</span>
+                        </template>
+                        <!-- 系统消息：图标 + 文本 -->
+                        <template v-else-if="msg.type === 'system'">
+                            <span class="system-icon">ℹ️</span>
+                            <span class="plain-text">{{ msg.text }}</span>
+                        </template>
+                        <!-- 其他消息 -->
+                        <template v-else>
+                            <span class="info-icon">✨</span>
+                            <span class="plain-text">{{ msg.text }}</span>
+                        </template>
                     </div>
                     <div class="message-time">{{ msg.time }}</div>
                 </div>
@@ -60,6 +74,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import sseService from './services/sseService';
+import MarkdownMessage from './components/MarkdownMessage.vue';
 
 const messages = ref([]);
 const inputMessage = ref('');
@@ -272,9 +287,9 @@ onUnmounted(() => {
     justify-content: flex-end;
 }
 
-/* 系统消息居中 */
+/* 系统消息左对齐 */
 .message.system {
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .message-bubble {
@@ -299,22 +314,40 @@ onUnmounted(() => {
 }
 
 .message.system .message-time {
-    text-align: center;
+    text-align: left;
 }
 
 .message-content {
     padding: 12px 16px;
     border-radius: 18px;
-    display: inline-block;
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 8px;
     word-wrap: break-word;
     word-break: break-word;
 }
 
+.plain-text {
+    white-space: pre-wrap;
+    flex: 1;
+}
+
+/* 图标样式 */
+.server-icon,
+.user-icon,
+.system-icon,
+.info-icon {
+    flex-shrink: 0;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
 .message.system .message-content {
-    background: #e3f2fd;
-    color: #1976d2;
+    background: #f5f5f5;
+    color: #666;
     font-size: 13px;
     padding: 8px 12px;
+    border-radius: 12px;
 }
 
 .message.info .message-content {
@@ -337,7 +370,10 @@ onUnmounted(() => {
     border: 1px solid #e0e0e0;
     border-radius: 18px 18px 18px 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 14px 18px;
+    min-width: 200px;
 }
+
 
 .message.direct .message-content {
     background: #fff3e0;

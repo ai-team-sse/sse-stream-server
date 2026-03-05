@@ -25,7 +25,8 @@
       "Bash(lsof -ti:5000)",
       "Bash(xargs kill -9)",
       "Bash(lsof -i:5000 -i:5173)",
-      "Bash(curl -s http://localhost:5000/health)"
+      "Bash(curl -s http://localhost:5000/health)",
+      "Bash(npm install marked highlight.js)"
     ]
   }
 }

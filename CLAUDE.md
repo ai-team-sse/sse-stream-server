@@ -77,7 +77,7 @@ res.setHeader('X-Accel-Buffering', 'no'); // 禁用 Nginx 缓冲
 ## 环境配置
 
 复制 `server/.env.example` 到 `server/.env`:
-- `PORT` - 服务器端口（默认 3000）
+- `PORT` - 服务器端口（默认 5000）
 - `NODE_ENV` - 运行环境
 - `CORS_ORIGIN` - CORS 允许的源
 
@@ -85,10 +85,10 @@ res.setHeader('X-Accel-Buffering', 'no'); // 禁用 Nginx 缓冲
 
 ```bash
 # 连接 SSE 流
-curl -N http://localhost:3000/api/sse/stream
+curl -N http://localhost:5000/api/sse/stream
 
 # 发送广播消息（需要新开终端）
-curl -X POST http://localhost:3000/api/sse/broadcast \
+curl -X POST http://localhost:5000/api/sse/broadcast \
   -H "Content-Type: application/json" \
   -d '{"message": "Hello, World!"}'
 ```

@@ -21,6 +21,7 @@
 
 ## 功能特性
 
+### 后端功能
 - ✅ **实时通信** - 基于 SSE 的服务器推送技术
 - ✅ **连接管理** - 自动管理客户端连接生命周期
 - ✅ **消息广播** - 支持向所有客户端广播消息
@@ -28,7 +29,15 @@
 - ✅ **心跳保活** - 30秒心跳机制保持连接稳定
 - ✅ **类型安全** - 完整的 TypeScript 类型支持
 - ✅ **跨域支持** - 内置 CORS 中间件
-- ✅ **前后分离** - 清晰的前后端架构设计
+- ✅ **完整测试** - Vitest 单元测试和集成测试
+
+### 前端功能
+- ✅ **Vue 3 聊天室** - 现代化的聊天界面
+- ✅ **实时消息** - 即时接收和发送消息
+- ✅ **在线统计** - 显示当前在线人数
+- ✅ **自动重连** - 断线自动重连机制
+- ✅ **美观 UI** - 响应式设计，渐变色主题
+- ✅ **开发友好** - Vite + Vue 3 快速开发
 
 ## 技术栈
 
@@ -115,10 +124,16 @@ npm install
 # 复制环境变量配置
 cp server/.env.example server/.env
 
-# 开发模式运行（支持热重载）
+# 开发模式运行后端（支持热重载）
 npm run dev
 
-# 构建 TypeScript
+# 开发模式运行前端
+npm run dev:client
+
+# 同时运行前后端（推荐）
+npm run dev:all
+
+# 构建所有项目
 npm run build
 
 # 生产模式运行
@@ -165,7 +180,7 @@ npm run format
 # ...
 ```
 
-服务器默认在 `http://localhost:3000` 启动。
+服务器默认在 `http://localhost:5000` 启动。
 
 #### 2. 前端客户端
 
@@ -264,18 +279,18 @@ GET /api/sse/clients
 
 ```bash
 # 1. 建立 SSE 连接（终端1）
-curl -N http://localhost:3000/api/sse/stream
+curl -N http://localhost:5000/api/sse/stream
 
 # 2. 发送广播消息（终端2）
-curl -X POST http://localhost:3000/api/sse/broadcast \
+curl -X POST http://localhost:5000/api/sse/broadcast \
   -H "Content-Type: application/json" \
   -d '{"message": "Hello, World!"}'
 
 # 3. 查看连接的客户端
-curl http://localhost:3000/api/sse/clients
+curl http://localhost:5000/api/sse/clients
 
 # 4. 发送定向消息
-curl -X POST http://localhost:3000/api/sse/send/client-123456 \
+curl -X POST http://localhost:5000/api/sse/send/client-123456 \
   -H "Content-Type: application/json" \
   -d '{"message": "Private message"}'
 ```
@@ -284,7 +299,7 @@ curl -X POST http://localhost:3000/api/sse/send/client-123456 \
 
 ```javascript
 // 建立 SSE 连接
-const eventSource = new EventSource('http://localhost:3000/api/sse/stream');
+const eventSource = new EventSource('http://localhost:5000/api/sse/stream');
 
 // 监听消息
 eventSource.onmessage = (event) => {
@@ -377,8 +392,10 @@ npm run lint:fix
 
 ### 项目文档
 
+- [快速开始指南](./GETTING_STARTED.md) - 新手入门必读
 - [后端开发文档](./server/README.md) - 后端 API 和服务详细说明
 - [前端开发文档](./client/README.md) - 客户端集成指南
+- [部署指南](./DEPLOYMENT.md) - 生产环境部署和域名配置
 - [代码风格指南](./server/CODE_STYLE.md) - 代码规范和格式化配置
 - [测试文档](./server/TEST.md) - 测试框架和最佳实践
 - [Claude Code 指南](./CLAUDE.md) - 面向 AI 辅助开发的项目指南

@@ -26,7 +26,7 @@ npm install
 npm run dev
 ```
 
-服务器将在 http://localhost:3000 启动
+服务器将在 http://localhost:5000 启动
 
 ### 构建生产版本
 
@@ -105,10 +105,10 @@ server/
 
 ```bash
 # 连接 SSE 流
-curl -N http://localhost:3000/api/sse/stream
+curl -N http://localhost:5000/api/sse/stream
 
 # 发送广播消息
-curl -X POST http://localhost:3000/api/sse/broadcast \
+curl -X POST http://localhost:5000/api/sse/broadcast \
   -H "Content-Type: application/json" \
   -d '{"message": "Hello, World!"}'
 ```

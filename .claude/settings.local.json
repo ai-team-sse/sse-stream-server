@@ -14,7 +14,18 @@
       "Bash(npm run format)",
       "Bash(npm install)",
       "Bash(npm run format:check)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(npm init -y)",
+      "Bash(npm install vue@latest vite@latest @vitejs/plugin-vue@latest)",
+      "Bash(npm install vue@3.4 vite@5.4 @vitejs/plugin-vue@5.1)",
+      "Bash(npm install -D concurrently)",
+      "Bash(grep -r \"localhost:3000\" /Users/C5344353/devcode/sse-stream-server/*.md)",
+      "Bash(find /Users/C5344353/devcode/sse-stream-server -name \"*.md\" -type f -exec sed -i '' 's/localhost:3000/localhost:5000/g' {} ;)",
+      "Bash(npm run dev:all)",
+      "Bash(lsof -ti:5000)",
+      "Bash(xargs kill -9)",
+      "Bash(lsof -i:5000 -i:5173)",
+      "Bash(curl -s http://localhost:5000/health)"
     ]
   }
 }

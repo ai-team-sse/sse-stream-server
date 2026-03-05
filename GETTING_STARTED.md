@@ -44,13 +44,33 @@ CORS_ORIGIN=*
 
 ### 开发模式
 
+#### 方式一：同时运行前后端（推荐）
+
 在根目录执行：
+
+```bash
+npm run dev:all
+```
+
+这将同时启动：
+- 后端服务器: `http://localhost:5000`
+- 前端客户端: `http://localhost:5173`
+
+#### 方式二：单独运行后端
 
 ```bash
 npm run dev
 ```
 
-服务器将在 `http://localhost:3000` 启动，支持热重载。
+服务器将在 `http://localhost:5000` 启动，支持热重载。
+
+#### 方式三：单独运行前端
+
+```bash
+npm run dev:client
+```
+
+前端将在 `http://localhost:5173` 启动。
 
 ### 生产模式
 
@@ -64,10 +84,19 @@ npm start
 
 ## 验证安装
 
-### 1. 健康检查
+### 方式一：使用前端界面（推荐）
+
+1. 运行 `npm run dev:all` 启动前后端
+2. 打开浏览器访问 `http://localhost:5173`
+3. 看到"已连接"状态后，在输入框输入消息
+4. 打开多个浏览器标签测试多人聊天
+
+### 方式二：使用 curl 测试
+
+#### 1. 健康检查
 
 ```bash
-curl http://localhost:3000/health
+curl http://localhost:5000/health
 ```
 
 预期输出：
@@ -78,12 +107,12 @@ curl http://localhost:3000/health
 }
 ```
 
-### 2. 测试 SSE 连接
+#### 2. 测试 SSE 连接
 
 在一个终端窗口中：
 
 ```bash
-curl -N http://localhost:3000/api/sse/stream
+curl -N http://localhost:5000/api/sse/stream
 ```
 
 你应该看到初始连接消息：
@@ -91,12 +120,12 @@ curl -N http://localhost:3000/api/sse/stream
 data: {"type":"connected","clientId":"client-xxx","message":"连接成功"}
 ```
 
-### 3. 发送广播消息
+#### 3. 发送广播消息
 
 在另一个终端窗口中：
 
 ```bash
-curl -X POST http://localhost:3000/api/sse/broadcast \
+curl -X POST http://localhost:5000/api/sse/broadcast \
   -H "Content-Type: application/json" \
   -d '{"message": "Hello, World!"}'
 ```

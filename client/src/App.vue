@@ -19,15 +19,18 @@
                 v-for="(msg, index) in messages"
                 :key="index"
                 class="message"
-                :class="msg.type"
+                :class="[msg.type, { 'message-right': msg.type === 'broadcast', 'message-left': msg.type === 'server-reply' }]"
             >
-                <div class="message-time">{{ msg.time }}</div>
-                <div class="message-content">
-                    <span v-if="msg.type === 'system'" class="system-icon">ℹ️</span>
-                    <span v-else-if="msg.type === 'broadcast'" class="broadcast-icon">📢</span>
-                    <span v-else-if="msg.type === 'direct'" class="direct-icon">💬</span>
-                    <span v-else-if="msg.type === 'info'" class="info-icon">✨</span>
-                    {{ msg.text }}
+                <div class="message-bubble">
+                    <div class="message-content">
+                        <span v-if="msg.type === 'system'" class="system-icon">ℹ️</span>
+                        <span v-else-if="msg.type === 'server-reply'" class="server-icon">🤖</span>
+                        <span v-else-if="msg.type === 'broadcast'" class="user-icon">👤</span>
+                        <span v-else-if="msg.type === 'direct'" class="direct-icon">💬</span>
+                        <span v-else-if="msg.type === 'info'" class="info-icon">✨</span>
+                        {{ msg.text }}
+                    </div>
+                    <div class="message-time">{{ msg.time }}</div>
                 </div>
             </div>
         </div>
@@ -129,9 +132,10 @@ onMounted(() => {
                 addMessage('连接成功！', 'system');
                 updateOnlineCount();
             } else if (data.type === 'broadcast') {
-                // 显示广播消息
+                // 区分用户消息和服务器回复
                 const messageText = data.message || JSON.stringify(data);
-                addMessage(messageText, 'broadcast');
+                const messageType = data.sender === 'server' ? 'server-reply' : 'broadcast';
+                addMessage(messageText, messageType);
                 updateOnlineCount();
             } else if (data.type === 'direct') {
                 // 显示私信消息
@@ -243,6 +247,7 @@ onUnmounted(() => {
 
 .message {
     margin-bottom: 16px;
+    display: flex;
     animation: slideIn 0.3s ease-out;
 }
 
@@ -257,24 +262,59 @@ onUnmounted(() => {
     }
 }
 
+/* 左对齐：服务器回复 */
+.message-left {
+    justify-content: flex-start;
+}
+
+/* 右对齐：用户消息 */
+.message-right {
+    justify-content: flex-end;
+}
+
+/* 系统消息居中 */
+.message.system {
+    justify-content: center;
+}
+
+.message-bubble {
+    display: flex;
+    flex-direction: column;
+    max-width: 70%;
+}
+
 .message-time {
     font-size: 11px;
     color: #999;
-    margin-bottom: 4px;
+    margin-top: 4px;
+}
+
+/* 时间位置调整 */
+.message-left .message-time {
+    text-align: left;
+}
+
+.message-right .message-time {
+    text-align: right;
+}
+
+.message.system .message-time {
+    text-align: center;
 }
 
 .message-content {
     padding: 12px 16px;
-    border-radius: 12px;
+    border-radius: 18px;
     display: inline-block;
-    max-width: 80%;
     word-wrap: break-word;
+    word-break: break-word;
 }
 
 .message.system .message-content {
     background: #e3f2fd;
     color: #1976d2;
-    font-size: 14px;
+    font-size: 13px;
+    padding: 8px 12px;
 }
 
 .message.info .message-content {
@@ -282,10 +322,21 @@ onUnmounted(() => {
     color: #2e7d32;
 }
 
+/* 用户消息：右边，紫色渐变 */
 .message.broadcast .message-content {
-    background: #f3e5f5;
-    color: #7b1fa2;
-    font-weight: 500;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 18px 18px 4px 18px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* 服务器回复：左边，白色背景 */
+.message.server-reply .message-content {
+    background: white;
+    color: #333;
+    border: 1px solid #e0e0e0;
+    border-radius: 18px 18px 18px 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .message.direct .message-content {
@@ -299,7 +350,8 @@ onUnmounted(() => {
 }
 
 .system-icon,
-.broadcast-icon {
+.broadcast-icon,
+.server-icon {
     margin-right: 6px;
 }
 

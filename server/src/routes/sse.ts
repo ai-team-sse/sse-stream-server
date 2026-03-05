@@ -32,6 +32,41 @@ sseRouter.get('/stream', (req: Request, res: Response) => {
 });
 
 /**
+ * 处理消息并生成回复
+ */
+function processMessage(userMessage: string): string {
+    const msg = userMessage.toLowerCase().trim();
+
+    // 简单的规则匹配回复
+    if (msg.includes('你好') || msg.includes('hello') || msg.includes('hi')) {
+        return '你好！很高兴见到你！😊';
+    }
+
+    if (msg.includes('时间')) {
+        const now = new Date();
+        return `现在时间是: ${now.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}`;
+    }
+
+    if (msg.includes('天气')) {
+        return '抱歉，我暂时无法查询天气信息。但今天看起来是个不错的日子！🌤️';
+    }
+
+    if (msg.includes('帮助') || msg === '?') {
+        return '我可以回答关于时间的问题，也可以和你聊天。试试说"你好"或"现在几点"吧！';
+    }
+
+    // 默认回复
+    const responses = [
+        `收到你的消息："${userMessage}"`,
+        `我听到了："${userMessage}"，有什么我可以帮助你的吗？`,
+        `"${userMessage}" - 这是个有趣的话题！`,
+        `关于"${userMessage}"，让我想想...🤔`,
+    ];
+
+    return responses[Math.floor(Math.random() * responses.length)];
+}
+
+/**
  * 广播消息端点
  * POST /api/sse/broadcast
  * Body: { message: string }
@@ -43,16 +78,31 @@ sseRouter.post('/broadcast', (req: Request, res: Response) => {
         return res.status(400).json({ error: '消息不能为空' });
     }
 
-    const count = sseService.broadcast({
+    // 1. 广播用户消息
+    sseService.broadcast({
         type: 'broadcast',
         message,
+        sender: 'user',
         timestamp: new Date().toISOString(),
     });
 
+    // 2. 生成服务器回复
+    const reply = processMessage(message);
+
+    // 3. 广播服务器回复（稍微延迟，模拟思考）
+    setTimeout(() => {
+        sseService.broadcast({
+            type: 'broadcast',
+            message: reply,
+            sender: 'server',
+            timestamp: new Date().toISOString(),
+        });
+    }, 500);
+
     res.json({
         success: true,
-        message: '消息已广播',
-        clientCount: count,
+        message: '消息已发送',
+        clientCount: sseService.getClientCount(),
     });
 });
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="chat-container">
+    <div class="chat-container" :class="{ 'is-fullscreen': isFullscreen }">
         <div class="chat-header">
             <h1>SSE 聊天室</h1>
             <div class="status">
@@ -9,6 +9,16 @@
                 </span>
                 <span class="online-count">在线: {{ onlineCount }}</span>
             </div>
+            <button @click="toggleFullscreen" class="fullscreen-btn" :title="isFullscreen ? '退出全屏' : '进入全屏'">
+                <!-- 进入全屏图标 -->
+                <svg v-if="!isFullscreen" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                </svg>
+                <!-- 退出全屏图标 -->
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+                </svg>
+            </button>
         </div>
 
         <div class="chat-messages" ref="messagesContainer">
@@ -82,6 +92,7 @@ const isConnected = ref(false);
 const clientId = ref('');
 const onlineCount = ref(0);
 const messagesContainer = ref(null);
+const isFullscreen = ref(false);
 
 const addMessage = (text, type = 'info') => {
     const now = new Date();
@@ -132,6 +143,23 @@ const updateOnlineCount = async () => {
         onlineCount.value = data.count;
     } catch (error) {
         console.error('获取在线人数失败:', error);
+    }
+};
+
+const toggleFullscreen = () => {
+    const chatContainer = document.querySelector('.chat-container');
+
+    if (!isFullscreen.value) {
+        // 进入全屏
+        isFullscreen.value = true;
+    } else {
+        // 退出全屏 - 添加收缩动画
+        chatContainer.style.animation = 'collapseToCenter 0.3s ease-in';
+
+        setTimeout(() => {
+            isFullscreen.value = false;
+            chatContainer.style.animation = '';
+        }, 300);
     }
 };
 
@@ -193,6 +221,46 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    transform-origin: center center;
+    transition: all 0.3s ease-out;
+    will-change: transform, opacity;
+}
+
+/* 全屏模式 */
+.chat-container.is-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    border-radius: 0;
+    z-index: 9999;
+    animation: expandFromCenter 0.35s ease-out;
+}
+
+/* 从中间向四角展开的动画 - 优化版 */
+@keyframes expandFromCenter {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 从四角向中间收缩的动画 - 优化版 */
+@keyframes collapseToCenter {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
 }
 
 .chat-header {
@@ -200,6 +268,7 @@ onUnmounted(() => {
     color: white;
     padding: 20px;
     text-align: center;
+    position: relative;
 }
 
 .chat-header h1 {
@@ -244,6 +313,44 @@ onUnmounted(() => {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 12px;
     font-size: 12px;
+}
+
+.fullscreen-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    padding: 0;
+}
+
+.fullscreen-btn svg {
+    transition: all 0.3s;
+}
+
+.fullscreen-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.fullscreen-btn:hover svg {
+    transform: scale(1.1);
+}
+
+.fullscreen-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .chat-messages {
